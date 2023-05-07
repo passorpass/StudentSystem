@@ -1,0 +1,23 @@
+server:
+  port: 8080
+
+spring:
+  devtools:
+    restart:
+      poll-interval: 3000
+      quiet-period: 2999
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/sys_student
+    username: root
+    password: 123456
+    type: com.alibaba.druid.pool.DruidDataSource
+
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+
+

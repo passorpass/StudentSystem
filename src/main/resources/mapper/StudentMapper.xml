@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--
+      mapper为映射的根节点，用来管理DAO接口
+      namespace指定DAO接口的完整类名，表示mapper配置文件管理哪个DAO接口(包.接口名)
+      mybatis会依据这个接口动态创建一个实现类去实现这个接口，而这个实现类是一个Mapper对象
+   -->
+
+
+<mapper namespace="com.student.mapper.StudentMapper">
+
+
+
+    <!--字段映射-->
+    <resultMap id="Map" type="com.student.entity.Student">
+        <id column="StudentID" property="id"/>
+        <result column="Name" property="name"/>
+        <result column="Gender" property="sex"/>
+        <result column="Class" property="cls"/>
+        <result column="Age" property="age"/>
+        <result column="Password" property="password"/>
+    </resultMap>
+
+<!--    根据id修改-->
+    <update id="updbyid">
+
+        update student
+        <set>
+            <if test="name != null and name != ''">
+                Name = #{username},
+            </if>
+
+            <if test="age != null and age != ''">
+                Age = #{age},
+            </if>
+
+            <if test="sex != null and sex != ''">
+                Gender = #{sex},
+            </if>
+
+            <if test="cls != null and cls != ''">
+                Class = #{cls},
+            </if>
+
+            <if test="password != null and password != ''">
+                Password = #{password},
+            </if>
+        </set>
+        where StudentID = #{id};
+
+    </update>
+    <!--    根据id删除-->
+    <!--    由于该表拥有外键所有有两种删除删除-->
+    <!--    第一种就是先删字表的数据，再删主表的数据，这样的就可以简单的一键删除，
+    但是在删除时应该给操作者提示这样做会全部删除包括外界关联的表-->
+    <!--    我们这里选用第一种-->
+    <!--    第二种就是先关闭外界约束，这样做就可以直接删除主表的数据了，但是这样的就会有无用的数据保留在字表中-->
+    <!--            SET foreign_key_checks = 0;  // 先设置外键约束检查关闭-->
+    <!--   -->
+    <!--            drop table table1;-->
+    <!--            detele from table where ;-->
+    <!--            // 删除表或数据-->
+    <!--   -->
+    <!--    SET foreign_key_checks = 1; // 开启外键约束检查，以保持表结构完整性-->
+    <delete id="Del">
+
+        delete
+        course,student
+        from course,student
+        where course.StudentID = student.StudentID and student.StudentID =
+        #{id};
+
+
+    </delete>
+
+    <!--    批量删除-->
+    <delete id="Dels" parameterType="Integer">
+        delete
+        from student
+        where StudentID in
+        <foreach item="ids" collection="list" index="index" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </delete>
+
+    <!--    查询所有-->
+    <select id="getAll" resultType="com.student.entity.Student" resultMap="Map">
+        select *
+        from student
+    </select>
+
+
+    <!--    插入数据-->
+    <insert id="addone" parameterType="com.student.entity.Student">
+        insert into student( Name, Age, Gender, Class, Password)
+        values (#{name}, #{age}, #{sex}, #{cls}, SHA2(#{password},256))
+    </insert>
+
+
+    <!--    根据id查询数据-->
+    <select id="getOneById" resultMap="Map">
+        select *
+        from student
+        where StudentID = #{id}
+    </select>
+
+    <!--    分页查询-->
+    <select id="Page" resultMap="Map">
+
+        select StudentID, Name, Age, Gender, Class, Password
+        from student limit #{page},#{pageSize};
+
+    </select>
+
+
+</mapper>

@@ -22,7 +22,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 @RestController
-@Controller
 @Slf4j
 @RequestMapping("/admin")
 public class AdminController {

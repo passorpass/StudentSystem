@@ -14,7 +14,6 @@ import javax.annotation.Resource;
 import java.util.List;
 
 @RestController
-@Controller
 @Slf4j
 @RequestMapping("/student")
 public class StudentController {

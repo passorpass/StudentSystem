@@ -32,6 +32,9 @@ public interface AdminMapper extends BaseMapper<Admin> {
     Boolean updbyid(Admin admin);
 
 
+    Admin getByUsername(String username);
+
+
 
 
 

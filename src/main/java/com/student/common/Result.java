@@ -9,35 +9,32 @@ import org.jetbrains.annotations.NotNull;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Result {
+public class Result<T> {
 
-    private static final Integer SUCCEE_CODE = 1;
-    private static final Integer EROOR_CODE = 0;
+    public static final int SUCCESS_CODE = 1;
+    public static final int ERROR_CODE = 0;
 
     private String msg;
     private Integer code;
-    private Object data;
+    private T data;
 
-    public static Result succee(Object obj){
-        Result r = new Result();
-        r.code = SUCCEE_CODE;
-        r.data =obj;
-        return r;
+    public static <T> Result<T> success(T data) {
+        return new Result<T>(SUCCESS_CODE, null, data);
     }
 
-    public static Result error(String msg){
-        Result r = new Result();
-        r.code = EROOR_CODE;
-        r.msg = msg;
-        return r;
+    public static <T> Result<T> error(String msg) {
+        return new Result<T>(ERROR_CODE, msg, null);
     }
 
-    public Result cost(String msg,Integer code,Object obj ){
-        Result r = new Result();
-        r.code = code;
-        r.msg = msg;
-        r.data = obj;
-        return  r;
-
+    public static <T> Result<T> custom(String msg, int code, T data) {
+        return new Result<T>(code, msg, data);
     }
+
+    private Result(int code, String msg, T data) {
+        this.code = code;
+        this.msg = msg;
+        this.data = data;
+    }
+
+    // getter and setter methods
 }

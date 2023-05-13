@@ -10,11 +10,11 @@ import lombok.Data;
 public class Course {
 
     @TableField("CourseID")
-    private Integer cid;
+    private Long cid;
     @TableField("StudentID")
-    private Integer stid;
+    private Long stid;
     @TableField("SubjectID")
-    private Integer sbid;
+    private Long sbid;
     @TableField("Grade")
     private Integer grade;
 

@@ -10,7 +10,7 @@ import lombok.Data;
 public class Subject {
 
     @TableField("SubjectID")
-    private Integer id;
+    private Long id;
     @TableField("SubjectName")
     private String name;
     @TableField("Credit")

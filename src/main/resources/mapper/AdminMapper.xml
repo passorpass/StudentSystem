@@ -95,5 +95,11 @@
 
     </select>
 
+<!--    登录根据账号查询-->
+    <select id="getByUsername" resultType="com.student.entity.Admin">
+        select UserName
+        from admin where  UserName = #{username};
+    </select>
+
 
 </mapper>

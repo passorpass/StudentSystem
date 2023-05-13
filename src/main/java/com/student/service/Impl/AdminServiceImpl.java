@@ -47,6 +47,12 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper,Admin> implements 
         return adminMapper.updbyid(admin);
     }
 
+    @Override
+    public Admin getByUsername(String username) {
+
+        return adminMapper.getByUsername(username);
+    }
+
 
     /**
      * 查询所有

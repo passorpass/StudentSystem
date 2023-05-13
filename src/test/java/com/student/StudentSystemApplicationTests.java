@@ -2,20 +2,31 @@ package com.student;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.student.entity.Admin;
 import com.student.entity.redis.User;
+import com.student.service.AdminService;
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Map;
 
 @SpringBootTest
+@RunWith(SpringRunner.class)
 class StudentSystemApplicationTests {
 
     @Resource
     private StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    private AdminService adminService;
 
     @Test
     void contextLoads() {
@@ -61,6 +72,34 @@ class StudentSystemApplicationTests {
 
         Map<Object, Object> entries = stringRedisTemplate.opsForHash().entries("user:400");
         System.out.println("entried = "+ entries);
+    }
+
+
+    @Test
+    public void testAddOne() {
+        Admin admin = new Admin();
+        // 设置属性
+        admin.setUsername("test");
+        admin.setAge(20);
+        admin.setSex("male");
+        admin.setPassword("123456");
+        boolean result = adminService.addone(admin);
+        Assert.assertTrue(result);
+    }
+
+    @Test
+    public void testGetOneById() {
+        Integer id = 1;
+        List<Admin> adminList =  adminService.getonebyid(id);
+        Assert.assertNotNull(adminList);
+        Assert.assertEquals(1, adminList.size());
+    }
+
+    @Test
+    public void testAdminDel() {
+        Integer id = 1;
+        boolean result = adminService.adminDel(id);
+        Assert.assertTrue(result);
     }
 
 }

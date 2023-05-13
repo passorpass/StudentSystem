@@ -29,5 +29,6 @@ public interface AdminService extends IService<Admin>  {
     //根据id修改数据
     Boolean updbyid(Admin admin);
 
-
+    //登录根据账号查询
+    Admin getByUsername(String username);
 }

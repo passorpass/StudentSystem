@@ -10,7 +10,7 @@ import lombok.Data;
 public class Student {
 
     @TableField("StudentID")
-    private Integer id;
+    private Long id;
 
     @TableField("Name")
     private String name;

@@ -36,5 +36,7 @@ public class Result<T> {
         this.data = data;
     }
 
+
+
     // getter and setter methods
 }

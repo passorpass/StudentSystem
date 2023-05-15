@@ -1,20 +1,30 @@
 package com.student.util;
 
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
 
 public class PasswordEncoderUtil {
-
-    public static String encode(String password) throws NoSuchAlgorithmException {
-        MessageDigest md = MessageDigest.getInstance("SHA-256");
-        byte[] hash = md.digest(password.getBytes());
-        return Base64.getEncoder().encodeToString(hash);
+    public static String encode(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hash = md.digest(password.getBytes(StandardCharsets.UTF_8));
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Password encoding failed.", e);
+        }
     }
 
-    public static boolean matchesPassword(String password, String password1) throws NoSuchAlgorithmException {
-        String hashedPassword = encode(password);
-        String hashedPassword1 = encode(password1);
-        return hashedPassword.equals(hashedPassword1);
+    public static boolean matchesPassword(String password, String hashedPassword) {
+        String encodedPassword = encode(password);
+        return encodedPassword.equals(hashedPassword);
     }
 }

@@ -11,6 +11,7 @@ import com.student.util.JwtUtil;
 import com.student.util.LoginForm;
 import com.student.util.PasswordEncoderUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -43,14 +44,23 @@ public class AdminController {
         // 根据用户名从数据库中获取对应的用户信息
         Admin admin = adminService.getByUsername(username);
 
-        // 如果用户不存在或密码不正确，则返回登录失败信息
-        if (admin == null || !PasswordEncoderUtil.matchesPassword(password, admin.getPassword())) {
-            return Result.error("用户名或密码错误！");
+        // 如果用户不存在，则返回登录失败信息
+        if (admin == null) {
+            return Result.error("用户不存在！");
+        }
+
+        log.warn("\n"+"判断之前的密码 +\n"+"数据库密码amdin.getPassword ==>"+admin.getPassword()+"\n"+"表单密码password ==>"+password);
+        // 判断密码是否匹配
+        if (!PasswordEncoderUtil.matchesPassword(password,admin.getPassword())) {
+            log.warn("\n"+"判断之后的密码 "+"\n"+"数据库密码amdin.getPassword ==>"+admin.getPassword()+"\n"+
+                    "表单密码password ==>"+password);
+            return Result.error("密码错误！");
         }
 
         // 生成token并返回给前端
         String token = JwtUtil.generateToken(admin.getId());
-        return Result.success(token);
+        return Result.success((Object)token);
+
     }
 
 
@@ -59,7 +69,7 @@ public class AdminController {
      * @param request
      * @return
      */
-    @PostMapping("/logout")
+    @PostMapping(value = "/logout",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public Result logout(HttpServletRequest request) {
         // 从请求头中获取token
         String token = request.getHeader("Authorization");

@@ -19,6 +19,7 @@
         <result column="Gender" property="sex"/>
         <result column="Password" property="password"/>
     </resultMap>
+
 <!--    根据id修改数据-->
     <update id="updbyid">
         update admin
@@ -41,6 +42,8 @@
       </set>
         where AdminID = #{id};
     </update>
+
+
     <!--    根据id删除-->
     <delete id="adminDel">
         delete
@@ -97,8 +100,9 @@
 
 <!--    登录根据账号查询-->
     <select id="getByUsername" resultType="com.student.entity.Admin">
-        select UserName
-        from admin where  UserName = #{username};
+        SELECT AdminID, UserName,Age,Gender, Password
+        FROM admin
+        WHERE UserName = #{username}
     </select>
 
 

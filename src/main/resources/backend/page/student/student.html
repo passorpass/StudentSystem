@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生信息库</title>
+    <link rel="stylesheet" href="/backend/plugins/element-ui/lib/theme-chalk/index.css">
+    <style>
+        .header {
+            background-color: #ffffff;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .title {
+            font-size: 24px;
+            color: #333333;
+        }
+
+        .table-container {
+            margin-top: 20px;
+            background: linear-gradient(to bottom right, white, whitesmoke);
+            border-radius: 4px;
+            padding: 20px;
+        }
+
+        .table-row td {
+            background-color: #ffffff;
+        }
+
+        .button {
+            margin-left: 10px;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input {
+            margin-right: 10px;
+        }
+
+        .add-button-container {
+            text-align: right;
+        }
+    </style>
+</head>
+
+<body>
+<div id="app">
+    <el-container style="height: 100vh;">
+        <el-header class="header">
+            <h1 class="title">学生信息列表</h1>
+            <div class="search-container">
+                <el-input class="search-input" v-model="searchKeyword"
+                          placeholder="请输入关键字"></el-input>
+                <el-button type="primary" @click="searchStudent">搜索</el-button>
+            </div>
+            <div class="add-button-container">
+                <el-button type="primary" @click="addStudent">添加学生信息</el-button>
+            </div>
+        </el-header>
+
+        <el-main>
+            <div class="table-container">
+                <el-table :data="students" border style="width: 100%">
+                    <el-table-column prop="id" label="学号" width="120"></el-table-column>
+                    <el-table-column prop="name" label="姓名"></el-table-column>
+                    <el-table-column prop="age" label="年龄" width="80"></el-table-column>
+                    <el-table-column prop="sex" label="性别" width="100"></el-table-column>
+                    <el-table-column prop="cls" label="班级"></el-table-column>
+                    <el-table-column prop="password" label="登录密码">
+                        <template slot-scope="{ row }">
+                            <span v-if="row.showPassword">{{ row.password }}</span>
+                            <span v-else></span>
+                            <el-button class="button" size="mini" @click="togglePassword(row)"
+                                       type="info">
+                                {{ row.showPassword ? '折叠' : '展示' }}
+                            </el-button>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="操作">
+                        <template slot-scope="{ row }">
+                            <el-button @click="deleteStudent(row)" type="danger" size="mini">删除
+                            </el-button>
+                            <el-button @click="editStudent(row)" type="primary" size="mini">修改
+                            </el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <el-pagination
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        :current-page="currentPage"
+                        :page-sizes="[10, 20, 30, 40]"
+                        :page-size="pageSize"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="totalItems"
+                >
+                </el-pagination>
+            </div>
+        </el-main>
+    </el-container>
+</div>
+
+
+<script src="/backend/plugins/vue/vue.js"></script>
+<script src="/backend/plugins/element-ui/index.js"></script>
+<script src="/backend/plugins/axios/axios.min.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                students: []
+            };
+        },
+        created() {
+            this.getStudentList();
+        },
+        methods: {
+            getStudentList() {
+                axios.get('/student/list')
+                    .then(response => {
+                        this.students = response.data.map(student => {
+                            student.showPassword = false;
+                            return student;
+                        });
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            },
+            togglePassword(row) {
+                row.showPassword = !row.showPassword;
+            },
+
+            deleteStudent(row) {
+                this.$confirm('确定删除该学生信息吗?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    // Send delete request
+                    axios.delete(`/student/${row.id}`)
+                        .then(response => {
+                            if (response.data) {
+                                // 删除成功，从学生列表中移除该学生
+                                const index = this.students.findIndex(student => student.id === row.id);
+                                if (index !== -1) {
+                                    this.students.splice(index, 1);
+                                }
+                                this.$message({
+                                    type: 'success',
+                                    message: '删除成功'
+                                });
+                                console.log('删除成功');
+                            } else {
+                                this.$message({
+                                    type: 'error',
+                                    message: '删除失败'
+                                });
+                                console.log('删除失败');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('删除失败', error);
+                            this.$message({
+                                type: 'error',
+                                message: '删除失败'
+                            });
+                        });
+                }).catch(() => {
+                    // Cancel deletion
+                    console.log('取消删除');
+                });
+            },
+
+            editStudent(row) {
+                const params = new URLSearchParams();
+                params.append('id', row.id);
+                params.append('name', row.name);
+                params.append('age', row.age);
+                params.append('sex', row.sex);
+                params.append('cls', row.cls);
+                window.location.href = '/backend/page/student/update.html?' + params.toString();
+            },
+
+            addStudent() {
+                window.location.href = '/backend/page/student/add.html';
+            },
+
+            searchStudent() {
+                axios.get('/student/search', {
+                    params: {
+                        keyword: this.searchKeyword
+                    }
+                })
+                    .then(response => {
+                        this.students = response.data.map(student => {
+                            student.showPassword = false;
+                            return student;
+                        });
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            }
+        }
+    });
+</script>
+</body>
+</html>

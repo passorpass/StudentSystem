@@ -4,6 +4,9 @@ package com.student.controller;
 //import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 //import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 //import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.student.common.Result;
 import com.student.entity.Student;
 import com.student.service.StudentService;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +32,7 @@ public class StudentController {
     @GetMapping("/list")
     public List<Student> List(Student Student){
         log.info("Student:{}", Student);
-       return studentService.getAll();
+        return studentService.getAll();
 
     }
 
@@ -42,31 +45,29 @@ public class StudentController {
      */
 
     @GetMapping("/page")
-    public List<Student> page(int page, int pageSize){
+    public List<Student> page(int page,int pageSize){
         log.info("page = {},pageSize = {}" ,page,pageSize);
-
         return studentService.Page(page, pageSize);
-
     }
 
 
     /**
      * 添加数据
-     * @param Student
+     * @param student
      * @return
      */
-    @PutMapping("/add")
-    public Boolean adminAdd(Student Student){
+    @PostMapping("/add")
+    public Result adminAdd(@RequestBody Student student){
 
-        boolean addone = studentService.addone(Student);
+        boolean addone = studentService.addone(student);
 
 
         if(addone){
-            log.info("\n添加的信息如下：\tadmin:{}",Student.toString());
-            return true;
+            log.info("\n添加的信息如下：\tadmin:{}",student.toString());
+            return Result.success(student);
         }
 
-        return false;
+        return Result.error("添加失败");
 
     }
 
@@ -75,11 +76,11 @@ public class StudentController {
      * @return
      */
     @GetMapping("/{id}")
-    public List<Student> getone(@PathVariable Integer id){
+    public Result getone(@PathVariable Long id){
 
         List<Student> List = studentService.getonebyid(id);
         log.info("entity:{}",List.toString());
-        return List;
+        return Result.success(List);
 
     }
 
@@ -89,14 +90,14 @@ public class StudentController {
      * @return
      */
     @DeleteMapping("/{id}")
-    public Boolean Del(@PathVariable Integer id){
+    public Result Del(@PathVariable Long id){
         Boolean aBoolean = studentService.Del(id);
         if(aBoolean){
             log.info("删除成功");
-            return true;
+            return Result.success(true+"删除成功");
         }
         log.info("删除失败");
-        return false;
+        return Result.error("删除失败"+false);
 
     }
 
@@ -106,12 +107,12 @@ public class StudentController {
      * @return
      */
     @PostMapping("/dels")
-    public Integer dels(@RequestBody List<Integer> ids){
+    public Result dels(@RequestBody List<Integer> ids){
 
         if(!ids.isEmpty()){
-            return studentService.Dels(ids);
+            return Result.success(studentService.Dels(ids));
         }
-        return 0;
+        return Result.error("批量删除失败");
 
     }
 
@@ -120,14 +121,14 @@ public class StudentController {
      * @param student
      * @return
      */
-    @GetMapping("/update")
-    public Boolean update(Student student){
-
+    @PostMapping("/update")
+    public Result update(@RequestBody Student student) {
         Boolean aBoolean = studentService.updbyid(student);
-        log.info("admin:{}", student);
-        return aBoolean;
-
+        log.info("student:{}", student);
+        if (aBoolean) {
+            return Result.success(student);
+        }
+        return Result.error("修改失败");
     }
-
 
 }

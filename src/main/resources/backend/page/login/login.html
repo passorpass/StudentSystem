@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>登录</title>
+  <link rel="stylesheet" href="/backend/plugins/element-ui/index.css">
+  <link rel="stylesheet" href="/backend/css/body.css">
+  <style>
+    .container {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .form-box {
+      width: 400px;
+      padding: 30px;
+      border-radius: 5px;
+      background-color: #fff;
+    }
+
+    .form-item {
+      margin-bottom: 20px;
+    }
+
+    .login-title {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+
+<body>
+<div id="app">
+  <div class="container">
+    <div class="form-box">
+      <h2 class="login-title">登录</h2>
+      <el-form :model="form" ref="loginForm" :rules="rules" label-width="80px">
+        <el-form-item label="登录账号" prop="username">
+          <el-input v-model="form.username"></el-input>
+        </el-form-item>
+        <el-form-item label="登录密码" prop="password">
+          <el-input type="password" v-model="form.password"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="login">登录</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+  </div>
+</div>
+
+<script src="/backend/plugins/vue/vue.js"></script>
+<script src="/backend/plugins/element-ui/index.js"></script>
+<script src="/backend/plugins/axios/axios.min.js"></script>
+<script>
+  new Vue({
+    el: '#app',
+    data() {
+      return {
+        form: {
+          username: '',
+          password: ''
+        },
+        rules: {
+          username: [
+            {required: true, message: '请输入用户名', trigger: 'blur'}
+          ],
+          password: [
+            {required: true, message: '请输入密码', trigger: 'blur'}
+          ],
+          userInfo: null
+        }
+      };
+    },
+    methods: {
+      login() {
+        this.$refs.loginForm.validate((valid) => {
+          if (valid) {
+            // 发送登录请求
+            axios.post('/admin/login', {
+              username: this.form.username,
+              password: this.form.password
+            })
+                    .then(response => {
+                      if (response.data.code === 1) {
+                        // 登录成功
+                        alert('登录成功');
+
+                        // 保存用户信息到LocalStorage
+                        this.userInfo = response.data.username;  // 更新这行代码
+                        localStorage.setItem('userInfo', JSON.stringify(this.userInfo));
+
+                        // 跳转到首页
+                        window.location.href = '/backend/page/index.html';
+                      } else {
+                        // 登录失败
+                        alert('登录失败: ' + response.data.msg);
+                      }
+                    })
+                    .catch(error => {
+                      // 请求出错
+                      alert('请求出错');
+                      console.error(error);
+                    });
+          } else {
+            console.log('Form validation failed');
+            return false;
+          }
+        });
+      }
+    }
+  })
+</script>
+</body>
+
+</html>
+
+<!--</head>-->
+<!--<body>-->
+<!--<h1>Login Test</h1>-->
+<!--<div id="result"></div>-->
+
+<!--<script>-->
+<!--  // 构造登录请求的参数-->
+<!--  var username = "test";-->
+<!--  var password = "123456";-->
+<!--  var requestBody = JSON.stringify({ username: username, password: password });-->
+
+<!--  // 发起登录请求-->
+<!--  $.ajax({-->
+<!--    url: "/admin/login",-->
+<!--    type: "POST",-->
+<!--    contentType: "application/json",-->
+<!--    data: requestBody,-->
+<!--    success: function(response) {-->
+<!--      // 处理响应-->
+<!--      var code = response.code;-->
+<!--      if (code === 1) {-->
+<!--        // 登录成功-->
+<!--        $("#result").text("登录成功");-->
+<!--      } else {-->
+<!--        // 登录失败-->
+<!--        $("#result").text("登录失败");-->
+<!--      }-->
+<!--    },-->
+<!--    error: function() {-->
+<!--      // 请求出错-->
+<!--      $("#result").text("请求出错");-->
+<!--    }-->
+<!--  });-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->

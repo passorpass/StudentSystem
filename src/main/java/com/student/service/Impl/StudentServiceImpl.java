@@ -1,6 +1,7 @@
 package com.student.service.Impl;
 
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.student.entity.Student;
 import com.student.mapper.StudentMapper;
 import com.student.service.StudentService;
@@ -12,7 +13,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class StudentServiceImpl implements StudentService {
+public class StudentServiceImpl extends ServiceImpl<StudentMapper,Student> implements StudentService {
 
     @Resource
     private StudentMapper StudentMapper;
@@ -31,7 +32,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Boolean Del(Integer id) {
+    public Boolean Del(Long id) {
         return StudentMapper.Del(id);
     }
 
@@ -71,12 +72,11 @@ public class StudentServiceImpl implements StudentService {
      * @return
      */
     @Override
-    public List<Student>  getonebyid(Integer id) {
+    public List<Student>  getonebyid(Long id) {
 
         return StudentMapper.getOneById(id);
 
     }
-
 
 
 

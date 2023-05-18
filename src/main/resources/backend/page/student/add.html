@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>添加学生信息</title>
+    <link rel="stylesheet" href="/backend/plugins/element-ui/lib/theme-chalk/index.css">
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(to bottom right, #b3d8ff, #b3d4fc),
+            url("../../img/newstudent.png");
+            background-blend-mode: overlay;
+            background-color: rgba(0, 0, 0, 0.5);
+            background-size: cover;
+            color: #ffffff;
+        }
+
+        .button-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+<div id="app" class="container">
+    <h1>添加学生信息</h1>
+    <el-form ref="studentForm" :model="student" label-width="80px">
+        <el-form-item label="姓名" prop="name">
+            <el-input v-model="student.name" placeholder="请输入姓名"></el-input>
+        </el-form-item>
+        <el-form-item label="年龄" prop="age">
+            <el-input v-model.number="student.age" placeholder="请输入年龄"></el-input>
+        </el-form-item>
+        <el-form-item label="性别" prop="sex">
+            <el-radio-group v-model="student.sex">
+                <el-radio label="男">男</el-radio>
+                <el-radio label="女">女</el-radio>
+            </el-radio-group>
+        </el-form-item>
+        <el-form-item label="班级" prop="cls">
+            <el-input v-model="student.cls" placeholder="请输入班级"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+            <el-input type="password" v-model="student.password"></el-input>
+        </el-form-item>
+    </el-form>
+    <div class="button-container">
+        <el-button type="primary" @click="addStudent">添加</el-button>
+        <el-button @click="resetForm">重置</el-button>
+    </div>
+</div>
+
+<script src="/backend/plugins/vue/vue.js"></script>
+<script src="/backend/plugins/element-ui/index.js"></script>
+<script src="/backend/plugins/axios/axios.min.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                student: {
+                    name: '',
+                    age: '',
+                    sex: '',
+                    cls: '',
+                    password: ''
+                }
+            };
+        },
+        methods: {
+            addStudent() {
+                this.$refs.studentForm.validate((valid) => {
+                    if (valid) {
+                        axios.post('/student/add', this.student)
+                            .then(response => {
+                                console.log('学生信息添加成功', response.data);
+                                this.resetForm();
+                                this.$message({
+                                    type: 'success',
+                                    message: '学生信息添加成功',
+                                    duration: 2000 // Optional: Adjust the duration of the message
+                                });
+                                window.location.href = '/backend/page/student/student.html';
+                            })
+                            .catch(error => {
+                                console.error('学生信息添加失败', error);
+                                // Handle error response
+                                this.$message.error('学生信息添加失败');
+                            });
+                    } else {
+                        console.log('表单验证失败');
+                        return false;
+                    }
+                });
+            },
+            resetForm() {
+                this.$refs.studentForm.resetFields();
+            }
+        }
+    });
+</script>
+</body>
+
+</html>

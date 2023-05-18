@@ -49,11 +49,11 @@ public class AdminController {
             return Result.error("用户不存在！");
         }
 
-        log.warn("\n"+"判断之前的密码 +\n"+"数据库密码amdin.getPassword ==>"+admin.getPassword()+"\n"+"表单密码password ==>"+password);
+//        log.warn("\n"+"判断之前的密码 +\n"+"数据库密码amdin.getPassword ==>"+admin.getPassword()+"\n"+"表单密码password ==>"+password);
         // 判断密码是否匹配
         if (!PasswordEncoderUtil.matchesPassword(password,admin.getPassword())) {
-            log.warn("\n"+"判断之后的密码 "+"\n"+"数据库密码amdin.getPassword ==>"+admin.getPassword()+"\n"+
-                    "表单密码password ==>"+password);
+//            log.warn("\n"+"判断之后的密码 "+"\n"+"数据库密码amdin.getPassword ==>"+admin.getPassword()+"\n"+
+//                    "表单密码password ==>"+password);
             return Result.error("密码错误！");
         }
 

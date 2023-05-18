@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>修改学生信息</title>
+  <link rel="stylesheet" href="/backend/plugins/element-ui/lib/theme-chalk/index.css">
+  <script src="/backend/plugins/vue/vue.js"></script>
+  <script src="/backend/plugins/element-ui/index.js"></script>
+  <script src="/backend/plugins/axios/axios.min.js"></script>
+</head>
+<body>
+<div id="app">
+  <el-form :model="form" :rules="rules" ref="form" label-width="80px">
+    <el-form-item label="学号">
+      <el-input v-model="form.id" :disabled="true"></el-input>
+    </el-form-item>
+    <el-form-item label="姓名" prop="name">
+      <el-input v-model="form.name"></el-input>
+    </el-form-item>
+    <el-form-item label="年龄" prop="age">
+      <el-input v-model="form.age"></el-input>
+    </el-form-item>
+    <el-form-item label="性别" prop="gender">
+      <el-radio-group v-model="form.sex">
+        <el-radio label="男">男</el-radio>
+        <el-radio label="女">女</el-radio>
+      </el-radio-group>
+    </el-form-item>
+    <el-form-item label="班级" prop="class">
+      <el-input v-model="form.cls"></el-input>
+    </el-form-item>
+    <el-form-item label="密码" prop="password">
+      <el-input type="password" v-model="form.password"></el-input>
+    </el-form-item>
+    <el-form-item>
+      <el-button type="primary" @click="submitForm">提交</el-button>
+    </el-form-item>
+  </el-form>
+</div>
+<script>
+  var app = new Vue({
+    el: '#app',
+    data: {
+      form: {
+        name: '',
+        age: '',
+        sex: '',
+        cls: '',
+        password: ''
+      },
+      rules: {
+        name: [
+          {required: true, message: '请输入姓名', trigger: 'blur'},
+          {min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur'}
+        ],
+        age: [
+          {required: true, message: '请输入年龄', trigger: 'blur'},
+          {min: 1, max: 100, message: '年龄在 1 到 100 之间', trigger: 'blur'}
+        ],
+        sex: [
+          {required: true, message: '请选择性别', trigger: 'change'}
+        ],
+        cls: [
+          {required: true, message: '请输入班级', trigger: 'blur'}
+        ],
+        password: [
+          {required: true, message: '请输入密码', trigger: 'blur'},
+          {min: 6, max: 20, message: '密码长度在 6 到 20 个字符', trigger: 'blur'}
+        ]
+      }
+    },
+    created() {
+      this.getStudentData();
+    },
+    methods: {
+      getStudentData() {
+        // 获取 URL 参数中的学生数据
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
+        const name = urlParams.get('name');
+        const age = urlParams.get('age');
+        const sex = urlParams.get('sex');
+        const cls = urlParams.get('cls');
+        const password = urlParams.get('password');
+
+        // 将获取到的学生数据回填到表单中
+        this.form = {
+          id: id,
+          name: name,
+          age: age,
+          sex: sex,
+          cls: cls,
+          password: password
+        };
+      },
+      submitForm() {
+        this.$refs.form.validate((valid) => {
+          if (valid) {
+            // 表单验证通过，发送 axios 请求
+            axios.post('/student/update', this.form)
+                    .then(response => {
+                      // 根据后端返回的 code 字段判断成功与失败
+                      if (response.data.code === 1) {
+                        // 请求成功处理逻辑
+                        alert('提交成功，学号：' + this.form.id);
+                        window.location.href = '/backend/page/student/student.html';
+                      } else {
+                        // 请求失败处理逻辑
+                        alert('提交失败');
+                      }
+                    })
+                    .catch(error => {
+                      // 请求失败处理逻辑
+                      console.error(error);
+                    });
+          } else {
+            return false;
+          }
+        });
+      }
+    }
+  })
+</script>
+
+</body>
+</html>

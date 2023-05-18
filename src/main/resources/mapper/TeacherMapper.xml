@@ -83,7 +83,7 @@
     <!--    插入数据-->
     <insert id="addone" parameterType="com.student.entity.Teacher">
         insert into teacher(Name,Age ,Gender,Subject,Password)
-        values (#{name},#{age},#{sex},#{subject},SHA2(#{password},256))
+        values (#{name},#{age},#{sex},#{subject},#{password})
     </insert>
 
 

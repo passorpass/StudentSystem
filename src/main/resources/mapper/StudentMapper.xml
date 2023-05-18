@@ -23,13 +23,11 @@
         <result column="Password" property="password"/>
     </resultMap>
 
-<!--    根据id修改-->
     <update id="updbyid">
-
-        update student
+        UPDATE student
         <set>
             <if test="name != null and name != ''">
-                Name = #{username},
+                Name = #{name},
             </if>
 
             <if test="age != null and age != ''">
@@ -41,15 +39,14 @@
             </if>
 
             <if test="cls != null and cls != ''">
-                Class = #{cls},
+                `Class` = #{cls},
             </if>
 
             <if test="password != null and password != ''">
                 Password = #{password},
             </if>
         </set>
-        where StudentID = #{id};
-
+        WHERE StudentID = #{id} AND StudentID IS NOT NULL;
     </update>
     <!--    根据id删除-->
     <!--    由于该表拥有外键所有有两种删除删除-->
@@ -95,7 +92,7 @@
     <!--    插入数据-->
     <insert id="addone" parameterType="com.student.entity.Student">
         insert into student( Name, Age, Gender, Class, Password)
-        values (#{name}, #{age}, #{sex}, #{cls}, SHA2(#{password},256))
+        values (#{name}, #{age}, #{sex}, #{cls}, #{password})
     </insert>
 
 

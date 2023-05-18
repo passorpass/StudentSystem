@@ -4,8 +4,10 @@ package com.student.controller;
 //import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 //import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 //import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.student.common.Result;
 import com.student.entity.Teacher;
 import com.student.service.TeacherService;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -56,17 +58,17 @@ public class TeacherCntroller {
      * @return
      */
     @PutMapping("/add")
-    public Boolean adminAdd(Teacher teacher){
+    public Result<String> adminAdd(Teacher teacher){
 
         boolean addone = teacherService.addone(teacher);
 
 
         if(addone){
             log.info("\n添加的信息如下：\tadmin:{}",teacher.toString());
-            return true;
+            return Result.success("添加成功");
         }
 
-        return false;
+        return Result.error("添加失败");
 
     }
 
@@ -75,11 +77,11 @@ public class TeacherCntroller {
      * @return
      */
     @GetMapping("/{id}")
-    public List<Teacher> getone(@PathVariable Integer id){
+    public Result<List<Teacher>> getone(@PathVariable Integer id){
 
         List<Teacher> List = teacherService.getonebyid(id);
         log.info("admin:{}",List.toString());
-        return List;
+        return Result.success(List);
 
     }
 
@@ -89,14 +91,14 @@ public class TeacherCntroller {
      * @return
      */
     @DeleteMapping("/{id}")
-    public Boolean Del(@PathVariable Integer id){
+    public Result<String> Del(@PathVariable Integer id){
         Boolean aBoolean = teacherService.Del(id);
         if(aBoolean){
             log.info("删除成功");
-            return true;
+            return Result.success("删除成功");
         }
         log.info("删除失败");
-        return false;
+        return Result.error("删除失败");
 
     }
 
@@ -121,12 +123,14 @@ public class TeacherCntroller {
      * @return
      */
     @GetMapping("/update")
-    public Boolean update(Teacher teacher){
+    public Result<Boolean> update(Teacher teacher){
 
         Boolean aBoolean = teacherService.updbyid(teacher);
         log.info("admin:{}", teacher);
-        return aBoolean;
-
+        if(aBoolean) {
+            return Result.success(aBoolean);
+        }
+        return Result.error("修改失败"+ false);
     }
 
 

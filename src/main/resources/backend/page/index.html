@@ -3,32 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <title>主页</title>
+    <link rel="stylesheet" href="/backend/plugins/element-ui/lib/theme-chalk/index.css">
+    <style>
+        body {
+            margin: 0;
+        }
+
+        #app {
+            height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .header {
+            flex: 0 0 auto;
+            background-color: #f5f7fa;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .content {
+            flex: 1 1 auto;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .aside {
+            width: 200px;
+            background-color: #f5f7fa;
+            overflow-y: auto;
+        }
+
+        .main {
+            flex: 1 1 auto;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .footer {
+            flex: 0 0 auto;
+            background-color: #f5f7fa;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .iframe-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
 </head>
 <body>
 <div id="app">
-    <el-container style="height: 100vh;">
-        <el-header>
-            <h1>Home Page</h1>
-        </el-header>
-        <el-main>
-            <el-card>
-                <h3>Welcome to the Home Page!</h3>
-                <p>Here you can display your content.</p>
-            </el-card>
-        </el-main>
-        <el-footer>
+    <div class="container">
+        <div class="header">
+            <h1>欢迎来到教务管理系统</h1>
+        </div>
+        <div class="content">
+            <div class="aside">
+                <el-menu default-active="1" @select="handleMenuSelect">
+                    <el-menu-item index="1">学生信息列表</el-menu-item>
+                    <el-menu-item index="2">老师信息列表</el-menu-item>
+                    <el-menu-item index="3">课程信息列表</el-menu-item>
+                    <el-menu-item index="4">学生成绩信息列表</el-menu-item>
+                    <el-menu-item index="5">管理员信息列表</el-menu-item>
+                </el-menu>
+            </div>
+            <div class="main">
+                <div class="iframe-container">
+                    <iframe id="page-frame" src="" frameborder="0"></iframe>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
             <p>Footer content goes here.</p>
-        </el-footer>
-    </el-container>
+        </div>
+    </div>
 </div>
 
-<script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
-<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="/backend/plugins/vue/vue.js"></script>
+<script src="/backend/plugins/element-ui/index.js"></script>
+<script src="/backend/plugins/axios/axios.min.js"></script>
 <script>
     new Vue({
         el: '#app',
+        methods: {
+            handleMenuSelect(index) {
+                const pageFrame = document.getElementById('page-frame');
+                pageFrame.src = ''; // Clear the iframe src before loading the new page
+
+                switch (index) {
+                    case '1':
+                        // Load the students page
+                        pageFrame.src = '/backend/page/student/student.html';
+                        break;
+                    case '2':
+                        // Load the teachers page
+                        pageFrame.src = '/backend/page/teacher/index.html';
+                        break;
+                    case '3':
+                        // Load the courses page
+                        pageFrame.src = '/backend/page/subject/index.html';
+                        break;
+                    case '4':
+                        // Load the student grades page
+                        pageFrame.src = '/backend/page/course/index.html';
+                        break;
+                    case '5':
+                        // Load the admins page
+                        pageFrame.src = '/backend/page/admin/index.html';
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
     });
 </script>
 </body>

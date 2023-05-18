@@ -4,6 +4,7 @@ package com.student.controller;
 //import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 //import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 //import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.student.common.Result;
 import com.student.entity.Course;
 import com.student.service.CourseService;
 import lombok.extern.slf4j.Slf4j;
@@ -56,17 +57,17 @@ public class CourseController {
      * @return
      */
     @PutMapping("/add")
-    public Boolean adminAdd(Course course){
+    public Result<Boolean> adminAdd(Course course){
 
         boolean addone = courseService.addone(course);
 
 
         if(addone){
             log.info("\n添加的信息如下：\tadmin:{}",course.toString());
-            return true;
+            return Result.success(addone);
         }
 
-        return false;
+        return Result.error("添加失败");
 
     }
 
@@ -75,11 +76,11 @@ public class CourseController {
      * @return
      */
     @GetMapping("/{id}")
-    public List<Course> getone(@PathVariable Integer id){
+    public Result<List<Course>> getone(@PathVariable Integer id){
 
         List<Course> List = courseService.getonebyid(id);
         log.info("admin:{}",List.toString());
-        return List;
+        return Result.success(List);
 
     }
 
@@ -89,14 +90,14 @@ public class CourseController {
      * @return
      */
     @DeleteMapping("/{id}")
-    public Boolean Del(@PathVariable Integer id){
+    public Result<Boolean> Del(@PathVariable Integer id){
         Boolean aBoolean = courseService.Del(id);
         if(aBoolean){
             log.info("删除成功");
-            return true;
+            return Result.success(aBoolean);
         }
         log.info("删除失败");
-        return false;
+        return Result.error("删除失败");
 
     }
 
@@ -121,12 +122,15 @@ public class CourseController {
      * @return
      */
     @GetMapping("/update")
-    public Boolean update(Course course){
+    public Result<Boolean> update(Course course){
 
         Boolean aBoolean = courseService.updbyid(course);
         log.info("admin:{}", course);
-        return aBoolean;
+        if(aBoolean) {
+            return Result.success(aBoolean);
+        }
 
+        return Result.error("修改失败");
     }
 
 

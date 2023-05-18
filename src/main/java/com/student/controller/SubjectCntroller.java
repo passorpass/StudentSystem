@@ -4,6 +4,7 @@ package com.student.controller;
 //import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 //import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 //import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.student.common.Result;
 import com.student.entity.Subject;
 import com.student.service.SubjectService;
 import lombok.extern.slf4j.Slf4j;
@@ -56,17 +57,17 @@ public class SubjectCntroller {
      * @return
      */
     @PutMapping("/add")
-    public Boolean adminAdd(Subject subject){
+    public Result<String> adminAdd(Subject subject){
 
         boolean addone = SubjectService.addone(subject);
 
 
         if(addone){
             log.info("\n添加的信息如下：\tadmin:{}",subject.toString());
-            return true;
+            return Result.success("添加成功");
         }
 
-        return false;
+        return Result.error("添加失败");
 
     }
 
@@ -75,11 +76,11 @@ public class SubjectCntroller {
      * @return
      */
     @GetMapping("/{id}")
-    public List<Subject> getone(@PathVariable Integer id){
+    public Result<List<Subject>> getone(@PathVariable Integer id){
 
         List<Subject> List = SubjectService.getonebyid(id);
         log.info("admin:{}",List.toString());
-        return List;
+        return Result.success(List);
 
     }
 
@@ -89,14 +90,14 @@ public class SubjectCntroller {
      * @return
      */
     @DeleteMapping("/{id}")
-    public Boolean Del(@PathVariable Integer id){
+    public Result<String> Del(@PathVariable Integer id){
         Boolean aBoolean = SubjectService.Del(id);
         if(aBoolean){
             log.info("删除成功");
-            return true;
+            return Result.success("删除成功");
         }
         log.info("删除失败");
-        return false;
+        return Result.error("删除失败");
 
     }
 
@@ -121,12 +122,14 @@ public class SubjectCntroller {
      * @return
      */
     @GetMapping("/update")
-    public Boolean update(Subject subject){
+    public Result<Boolean> update(Subject subject){
 
         Boolean aBoolean = SubjectService.updbyid(subject);
         log.info("admin:{}", subject);
-        return aBoolean;
-
+        if(aBoolean) {
+            return Result.success(aBoolean);
+        }
+        return Result.error(false+"修改失败");
     }
 
 
